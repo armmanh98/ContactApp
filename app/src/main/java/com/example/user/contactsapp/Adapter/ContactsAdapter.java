@@ -22,11 +22,11 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     private List<Contact> mData = Collections.emptyList();
     private LayoutInflater mInflater;
-    private ItemClickListener mClickListener;
+    private ItemLongClickListener mClickListener;
     private Contact contact;
 
 
-    public ContactsAdapter(Context context, List<Contact> data, ItemClickListener mClickListener) {
+    public ContactsAdapter(Context context, List<Contact> data, ItemLongClickListener mClickListener) {
         this.mClickListener = mClickListener;
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
@@ -61,24 +61,24 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
-        public LinearLayout linearLayout;
-        public TextView name;
-        public TextView number;
-        public TextView age;
-        public TextView gender;
+        LinearLayout linearLayout;
+        TextView name;
+        TextView number;
+        TextView age;
+        TextView gender;
 
-        public ViewHolder(View itemView)  {
+        ViewHolder(View itemView)  {
 
             super(itemView);
-            linearLayout = (LinearLayout) itemView.findViewById(R.id.mainActivity_linearLayout_of_contact) ;
-            name = (TextView) itemView.findViewById(R.id.mainActivity_textView_name);
-            number = (TextView) itemView.findViewById(R.id.mainActivity_textView_phoneNumber);
-            age = (TextView) itemView.findViewById(R.id.mainActivity_textView_age);
-            gender = (TextView) itemView.findViewById(R.id.mainActivity_textView_gender);
+            linearLayout = itemView.findViewById(R.id.mainActivity_linearLayout_of_contact) ;
+            name = itemView.findViewById(R.id.mainActivity_textView_name);
+            number = itemView.findViewById(R.id.mainActivity_textView_phoneNumber);
+            age = itemView.findViewById(R.id.mainActivity_textView_age);
+            gender = itemView.findViewById(R.id.mainActivity_textView_gender);
 
-            linearLayout.setOnLongClickListener(this);
+            itemView.setOnLongClickListener(this);
 
         }
 
@@ -90,13 +90,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         }
     }
 
-//    public void setClickListener(ItemClickListener itemClickListener) {
+//    public void setClickListener(ItemLongClickListener itemClickListener) {
 //        this.mClickListener = itemClickListener;
 //    }
 
 
 
-    public interface ItemClickListener {
+    public interface ItemLongClickListener {
         void onItemLongClick(View view, int position, Contact contact);
     }
     public void removeItem(int position) {

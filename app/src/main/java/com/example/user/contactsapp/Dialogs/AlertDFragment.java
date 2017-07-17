@@ -5,24 +5,28 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.example.user.contactsapp.Fragments.ContactsListFragment;
 import com.example.user.contactsapp.Interfaces.DialogClickListener;
+import com.example.user.contactsapp.R;
 
 /**
  * Created by User on 7/12/2017.
  */
 
 public class AlertDFragment extends DialogFragment {
-    ContactsListFragment contactsListFragment;
+
+
+    public static final String FROM_FOR_ALERT_FRAGMENT = "from  where  replace or add alertFragment";
+    public static final String ID_OF_LONG_CLICKED_ITEM = "Id of long clicked item";
+    public static final String POSITION_OF_LONG_CLICKED_ITEM = "Position of long clicked item";
+
     private DialogClickListener callback;
 
-    public static AlertDFragment newInstance(int someInt) {
+    public static AlertDFragment newInstance(int numberOfRequest) {
         AlertDFragment myFragment = new AlertDFragment();
 
         Bundle args = new Bundle();
-        args.putInt("someInt", someInt);
+        args.putInt(FROM_FOR_ALERT_FRAGMENT, numberOfRequest);
         myFragment.setArguments(args);
 
         return myFragment;
@@ -44,23 +48,21 @@ public class AlertDFragment extends DialogFragment {
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         return new AlertDialog.Builder(getActivity())
 
-                .setMessage("Contact")
+                .setMessage(R.string.message_alert_fragment)
 
-                // Positive button
-                .setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.positive_button_text, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        callback.onEditClick();
+                        callback.onEditClick(getArguments().getInt(ID_OF_LONG_CLICKED_ITEM));
 
-                        Log.i("TAG", getTargetFragment() + " ::::");
+
                     }
                 })
 
-                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.negative_button_text, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,	int which) {
-                        callback.onDeleteClick();
+                        callback.onDeleteClick(getArguments().getInt(ID_OF_LONG_CLICKED_ITEM),getArguments().getInt(POSITION_OF_LONG_CLICKED_ITEM));
 
 
-                        Log.i("TAG", contactsListFragment + " ::::");
                     }
                 }).create();
     }

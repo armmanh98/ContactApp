@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">Contacts App</string>
     <string name="submit">Submit</string>
+    <string name="wrong_statement">Wrong Statement</string>
+    <string name="error_empty_field">This field can not be empty</string>
+    <string name="message_alert_fragment">Contact</string>
+    <string name="positive_button_text">Edit</string>
+    <string name="negative_button_text">Delete</string>
+    <string name="edit_button_text">Edit</string>
+
+    <string-array name="genders_array">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
 </resources>

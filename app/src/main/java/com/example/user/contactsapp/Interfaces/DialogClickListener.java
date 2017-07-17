@@ -5,6 +5,6 @@ package com.example.user.contactsapp.Interfaces;
  */
 
 public interface DialogClickListener {
-    public void onEditClick();
-    public void onDeleteClick();
+    public void onEditClick(int id);
+    public void onDeleteClick(int id,int position);
 }

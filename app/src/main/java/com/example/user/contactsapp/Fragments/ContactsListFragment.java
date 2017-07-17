@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +13,22 @@ import android.widget.Button;
 
 import com.example.user.contactsapp.Adapter.ContactsAdapter;
 import com.example.user.contactsapp.Contact.Contact;
+import com.example.user.contactsapp.DataBasa.DatabaseHandler;
 import com.example.user.contactsapp.Dialogs.AlertDFragment;
 import com.example.user.contactsapp.Interfaces.DialogClickListener;
 import com.example.user.contactsapp.R;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.user.contactsapp.Dialogs.AlertDFragment.ID_OF_LONG_CLICKED_ITEM;
+import static com.example.user.contactsapp.Dialogs.AlertDFragment.POSITION_OF_LONG_CLICKED_ITEM;
+import static com.example.user.contactsapp.Fragments.AddOrEditContactFragment.AGE_OF_EDITABLE_ITEM;
+import static com.example.user.contactsapp.Fragments.AddOrEditContactFragment.FROM_FOR_ADD_OR_EDT_FRAGMENT_KEY;
+import static com.example.user.contactsapp.Fragments.AddOrEditContactFragment.GENDER_OF_EDITABLE_ITEM;
+import static com.example.user.contactsapp.Fragments.AddOrEditContactFragment.ID_OF_EDITABLE_ITEM;
+import static com.example.user.contactsapp.Fragments.AddOrEditContactFragment.NAME_OF_EDITABLE_ITEM;
+import static com.example.user.contactsapp.Fragments.AddOrEditContactFragment.NUMBER_OF_EDITABLE_ITEM;
 
 /**
  * Created by User on 7/12/2017.
@@ -30,10 +39,21 @@ public class ContactsListFragment extends Fragment  implements DialogClickListen
     private RecyclerView recyclerView;
     private Button btnAddContact;
     private List<Contact> contacts;
-    private int myPosition;
     private ContactsAdapter contactsAdapter;
     private AlertDFragment alertdFragment;
-//    FragmentManager fm = getFragmentManager();
+    DatabaseHandler db;
+
+    public static final String FROM_FOR_CONTACT_LIST_FRAGMENT = "from  where  replace or add contactListFragment";
+    public static final String TAG_FOR_ALERT_FRAGMENT = "Alert Dialog Fragment";
+
+    public static ContactsListFragment newInstance() {
+
+        Bundle args = new Bundle();
+
+        ContactsListFragment fragment = new ContactsListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -41,11 +61,11 @@ public class ContactsListFragment extends Fragment  implements DialogClickListen
         return inflater.inflate(R.layout.list_fragment, container, false);
     }
 
-    public static ContactsListFragment newInstance(int someInt) {
+    public static ContactsListFragment newInstance(int numberOfRequest) {
         ContactsListFragment myFragment = new ContactsListFragment();
 
         Bundle args = new Bundle();
-        args.putInt("someInt", someInt);
+        args.putInt(FROM_FOR_CONTACT_LIST_FRAGMENT, numberOfRequest);
         myFragment.setArguments(args);
 
         return myFragment;
@@ -62,39 +82,35 @@ public class ContactsListFragment extends Fragment  implements DialogClickListen
         alertdFragment = AlertDFragment.newInstance(5);
         alertdFragment.setTargetFragment(this,5);
 
+        db = new DatabaseHandler(getActivity());
 
-        contacts.add(new Contact("Arman",555,0,"Male"));
-        contacts.add(new Contact("Arman",555,1,"Male"));
-        contacts.add(new Contact("Arman",555,2,"Male"));
-        contacts.add(new Contact("Arman",555,3,"Male"));
-        contacts.add(new Contact("Arman",555,4,"Male"));
-        contacts.add(new Contact("Arman",555,5,"Male"));
-        contacts.add(new Contact("Arman",555,6,"Male"));
-        contacts.add(new Contact("Arman",555,7,"Male"));
-        contacts.add(new Contact("Arman",555,8,"Male"));
-
-        recyclerView = (RecyclerView)  view.findViewById(R.id.mainActivity_recyclerView_of_contacts_list);
-        btnAddContact = (Button) view.findViewById(R.id.list_fragment_btn_add);
+        recyclerView = view.findViewById(R.id.mainActivity_recyclerView_of_contacts_list);
+        btnAddContact = view.findViewById(R.id.list_fragment_btn_add);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        contactsAdapter = new ContactsAdapter(getActivity(), contacts, new ContactsAdapter.ItemClickListener() {
+        contactsAdapter = new ContactsAdapter(getActivity(), db.getAllContacts(), new ContactsAdapter.ItemLongClickListener() {
             @Override
             public void onItemLongClick(View view, int position, Contact contact) {
-                Log.i("TAG",":::  " + contact.getName() );
-                myPosition = position;
 
-                alertdFragment.getArguments().putInt("Position of item",position);
 
-                alertdFragment.show(getFragmentManager(), "Alert Dialog Fragment");
+                alertdFragment.getArguments().putInt(ID_OF_LONG_CLICKED_ITEM,contact.getId());
+                alertdFragment.getArguments().putInt(POSITION_OF_LONG_CLICKED_ITEM,position);
+
+                alertdFragment.show(getFragmentManager(), TAG_FOR_ALERT_FRAGMENT);
             }
         });
+        contactsAdapter.notifyDataSetChanged();
 
         recyclerView.setAdapter(contactsAdapter);
 
         btnAddContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Fragment addContactFragment = AddContactFragment.newInstance(5);
+
+                Bundle bundle = new Bundle();
+                bundle.putInt(FROM_FOR_ADD_OR_EDT_FRAGMENT_KEY,1);
+
+                Fragment addContactFragment = AddOrEditContactFragment.newInstance(bundle);
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
                 transaction.replace(R.id.mainActivity_list_place, addContactFragment);
@@ -107,13 +123,32 @@ public class ContactsListFragment extends Fragment  implements DialogClickListen
     }
 
     @Override
-    public void onEditClick() {
+    public void onEditClick(int id) {
+        Bundle bundle = new Bundle();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        bundle.putInt(FROM_FOR_ADD_OR_EDT_FRAGMENT_KEY,2);
+        bundle.putInt(ID_OF_EDITABLE_ITEM,db.getContact(id).getId());
+        bundle.putString(NAME_OF_EDITABLE_ITEM,db.getContact(id).getName());
+        bundle.putString(NUMBER_OF_EDITABLE_ITEM,db.getContact(id).getNumber());
+        bundle.putString(AGE_OF_EDITABLE_ITEM,db.getContact(id).getAge());
+        bundle.putString(GENDER_OF_EDITABLE_ITEM,db.getContact(id).getGender());
+
+        contactsAdapter.notifyDataSetChanged();
+        Fragment addContactFragment = AddOrEditContactFragment.newInstance(bundle);
+
+        transaction.replace(R.id.mainActivity_list_place, addContactFragment);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
 
     }
 
     @Override
-    public void onDeleteClick() {
-
+    public void onDeleteClick(int id,int position) {
+        db.deleteContact(id);
+        contactsAdapter.removeItem(position);
+        contactsAdapter.notifyDataSetChanged();
     }
 //    public void onUserSelectValue(int selectedValue) {
 //        // TODO add your implementation.
@@ -125,6 +160,5 @@ public class ContactsListFragment extends Fragment  implements DialogClickListen
 //
 //        }
 //    }
-
 
 }

@@ -5,30 +5,105 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:layout_margin="10dp"
-        android:padding="5dp"
-        android:id="@+id/fragmentEdit_name"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <EditText
-        android:layout_margin="10dp"
-        android:padding="5dp"
-        android:id="@+id/fragmentEdit_number"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:text="Name  :"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_weight="2"
+            android:layout_margin="10dp"
+            android:soundEffectsEnabled="true"
+            android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789_-"
+            android:padding="5dp"
+            android:inputType="textCapWords"
+            android:id="@+id/fragmentEdit_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <EditText
-        android:layout_margin="10dp"
-        android:padding="5dp"
-        android:id="@+id/fragmentEdit_age"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:text="Number  :"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:layout_weight="2"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:inputType="number"
+            android:id="@+id/fragmentEdit_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        </LinearLayout>
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <EditText
-        android:layout_margin="10dp"
-        android:padding="5dp"
-        android:id="@+id/fragmentEdit_gender"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:text="Age  :"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <EditText
+            android:layout_weight="2"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:inputType="number"
+            android:maxLength="3"
+            android:id="@+id/fragmentEdit_age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            android:gravity="center"
+            android:text="Gender  :" />
+
+        <Spinner
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:gravity="center"
+            android:id="@+id/spinner_gender"
+            android:layout_weight="2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        </Spinner>
+    </LinearLayout>
+
     <Button
         android:layout_marginTop="50dp"
         android:text="@string/submit"

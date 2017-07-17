@@ -7,12 +7,32 @@ import java.io.Serializable;
  */
 
 public class Contact implements Serializable {
+    private int id;
     private String name;
-    private int number;
-    private int age;
+    private String number;
+    private String age;
     private String gender;
 
-    public Contact(String name, int number, int age, String gender) {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    public Contact(){
+
+    }
+
+    public Contact(int id, String name, String number, String age, String gender) {
+        this.id = id;
+        this.name = name;
+        this.number = number;
+        this.age = age;
+        this.gender = gender;
+    }
+    public Contact(String name, String number, String age, String gender) {
+
         this.name = name;
         this.number = number;
         this.age = age;
@@ -27,19 +47,19 @@ public class Contact implements Serializable {
         this.name = name;
     }
 
-    public int getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 
-    public int getAge() {
+    public String getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(String age) {
         this.age = age;
     }
 
