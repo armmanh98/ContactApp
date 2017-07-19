@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/fragment_one_contact_textview_padding"
+            android:text="@string/name" />
+        <LinearLayout
+            android:layout_width="@dimen/divider_contact_field_layout_width"
+            android:layout_margin="@dimen/divider_contact_field_layout_margin"
+            android:background="@android:color/darker_gray"
+            android:layout_height="match_parent">
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/fragment_one_contact_name_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/fragment_one_contact_textview_padding" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/fragment_one_contact_textview_padding"
+            android:text="@string/number" />
+
+        <LinearLayout
+            android:layout_width="@dimen/divider_contact_field_layout_width"
+            android:layout_margin="@dimen/divider_contact_field_layout_margin"
+            android:background="@android:color/darker_gray"
+            android:layout_height="match_parent">
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/fragment_one_contact_number_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/fragment_one_contact_textview_padding" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/fragment_one_contact_textview_padding"
+            android:text="@string/age" />
+        <LinearLayout
+            android:layout_width="@dimen/divider_contact_field_layout_width"
+            android:layout_margin="@dimen/divider_contact_field_layout_margin"
+            android:background="@android:color/darker_gray"
+            android:layout_height="match_parent">
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/fragment_one_contact_age_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/fragment_one_contact_textview_padding" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/fragment_one_contact_textview_padding"
+            android:text="@string/gender" />
+        <LinearLayout
+            android:layout_width="@dimen/divider_contact_field_layout_width"
+            android:layout_margin="@dimen/divider_contact_field_layout_margin"
+            android:background="@android:color/darker_gray"
+            android:layout_height="match_parent">
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/fragment_one_contact_gender_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/fragment_one_contact_textview_padding" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

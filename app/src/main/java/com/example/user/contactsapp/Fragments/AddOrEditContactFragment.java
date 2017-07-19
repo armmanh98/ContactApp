@@ -39,7 +39,9 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     public static final String AGE_OF_EDITABLE_ITEM = "age edit cont";
     public static final String GENDER_OF_EDITABLE_ITEM = "gender edit cont";
     public static final String ID_OF_EDITABLE_ITEM = "Id edit cont";
-
+    String regEx = "[+][0-9]{10,13}$";
+    String regEx2 = "[0][0-9]{10,13}$";
+    String regEx3 = "[00][0-9]{10,13}$";
 
     public static AddOrEditContactFragment newInstance(Bundle bundle) {
 
@@ -122,6 +124,12 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (etNumber.getText().toString().isEmpty())
                     etNumber.setError(getString(R.string.error_empty_field));
+
+                if(!etNumber.getText().toString().matches(regEx) && !etNumber.getText().toString().matches(regEx2) && !etNumber.getText().toString().matches(regEx3)){
+                    etNumber.setError(getString(R.string.wrong_number));
+                }
+//                if (!isValidMobile(etNumber.getText().toString()))
+//                    etNumber.setError("AAA");
             }
 
             @Override
@@ -129,6 +137,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
             }
         });
+
 
 
 
@@ -221,5 +230,8 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
 
+    }
+    private boolean isValidMobile(String phone) {
+        return android.util.Patterns.PHONE.matcher(phone).matches();
     }
 }

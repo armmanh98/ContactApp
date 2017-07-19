@@ -13,6 +13,7 @@
     <string name="age">Age :</string>
     <string name="gender">Gender :</string>
     <string name="class_cast_exception_calling_fragment">Calling fragment must implement DialogClickListener interface</string>
+    <string name="wrong_number">Wrong number</string>
 
     <string-array name="genders_array">
         <item>Male</item>

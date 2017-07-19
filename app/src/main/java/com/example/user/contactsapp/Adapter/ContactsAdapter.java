@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.user.contactsapp.Contact.Contact;
@@ -22,12 +21,14 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     private List<Contact> mData = Collections.emptyList();
     private LayoutInflater mInflater;
-    private ItemLongClickListener mClickListener;
+    private ItemLongClickListener mLongClickListener;
+    private ItemClickListener mClickListener;
 
 
-    public ContactsAdapter(Context context, List<Contact> data, ItemLongClickListener mClickListener) {
-        this.mClickListener = mClickListener;
+    public ContactsAdapter(Context context, List<Contact> data, ItemLongClickListener mLongClickListener, ItemClickListener mClickListener) {
+        this.mLongClickListener = mLongClickListener;
         this.mInflater = LayoutInflater.from(context);
+        this.mClickListener = mClickListener;
         this.mData = data;
 
     }
@@ -48,8 +49,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
         holder.name.setText(mData.get(position).getName());
         holder.number.setText(String.valueOf(mData.get(position).getNumber()));
-        holder.age.setText(String.valueOf(mData.get(position).getAge()));
-        holder.gender.setText(mData.get(position).getGender());
+
     }
 
     @Override
@@ -58,38 +58,45 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     }
 
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, View.OnClickListener {
 
-        LinearLayout linearLayout;
         TextView name;
         TextView number;
-        TextView age;
-        TextView gender;
 
         ViewHolder(View itemView)  {
 
             super(itemView);
-            linearLayout = itemView.findViewById(R.id.mainActivity_linearLayout_of_contact) ;
+
             name = itemView.findViewById(R.id.mainActivity_textView_name);
             number = itemView.findViewById(R.id.mainActivity_textView_phoneNumber);
-            age = itemView.findViewById(R.id.mainActivity_textView_age);
-            gender = itemView.findViewById(R.id.mainActivity_textView_gender);
 
             itemView.setOnLongClickListener(this);
+            itemView.setOnClickListener(this);
 
         }
 
 
         @Override
         public boolean onLongClick(View view) {
-            if (mClickListener != null) mClickListener.onItemLongClick(view, getAdapterPosition(),mData.get(getAdapterPosition()));
+            if (mLongClickListener != null) mLongClickListener.onItemLongClick(view, getAdapterPosition(),mData.get(getAdapterPosition()));
             return false;
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition(),mData.get(getAdapterPosition()));
         }
     }
 
     public interface ItemLongClickListener {
 
         void onItemLongClick(View view, int position, Contact contact);
+
+    }
+    public interface ItemClickListener {
+
+        void onItemClick(View view, int position, Contact contact);
+
     }
 
     public void removeItem(int position) {

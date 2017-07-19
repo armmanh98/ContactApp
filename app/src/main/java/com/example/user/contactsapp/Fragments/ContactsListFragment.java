@@ -35,6 +35,7 @@ public class ContactsListFragment extends Fragment  implements DialogClickListen
 
     private ContactsAdapter contactsAdapter;
     private AlertDFragment alertdFragment;
+    private OneContactFragment oneContactFragment;
     DatabaseHandler db;
 
     public static final String FROM_WHERE_CONTACT_LIST_FRAGMENT_KEY = "from  where  replace or add contactListFragment";
@@ -84,12 +85,34 @@ public class ContactsListFragment extends Fragment  implements DialogClickListen
             @Override
             public void onItemLongClick(View view, int position, Contact contact) {
 
-
-                alertdFragment.getArguments().putInt(ID_OF_LONG_CLICKED_ITEM_KEY,contact.getId());
-                alertdFragment.getArguments().putInt(POSITION_OF_LONG_CLICKED_ITEM_KEY,position);
+                alertdFragment.getArguments().putInt(ID_OF_LONG_CLICKED_ITEM_KEY, contact.getId());
+                alertdFragment.getArguments().putInt(POSITION_OF_LONG_CLICKED_ITEM_KEY, position);
 
                 alertdFragment.show(getFragmentManager(), TAG_FOR_ALERT_FRAGMENT);
             }
+        }, new ContactsAdapter.ItemClickListener() {
+
+            @Override
+            public void onItemClick(View view, int position, Contact contact) {
+
+                Bundle bundle = new Bundle();
+                bundle.putString(NAME_OF_EDITABLE_ITEM,contact.getName());
+                bundle.putString(NUMBER_OF_EDITABLE_ITEM,contact.getNumber());
+                bundle.putString(AGE_OF_EDITABLE_ITEM,contact.getAge());
+                bundle.putString(GENDER_OF_EDITABLE_ITEM,contact.getGender());
+
+                oneContactFragment = OneContactFragment.newInstance(bundle);
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.mainActivity_list_place, oneContactFragment);
+                transaction.addToBackStack(null);
+
+
+                transaction.commit();
+
+
+            }
+
         });
         contactsAdapter.notifyDataSetChanged();
 

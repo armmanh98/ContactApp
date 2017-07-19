@@ -6,4 +6,7 @@
     <dimen name="edit_linear_layout_padding">10dp</dimen>
     <dimen name="edit_spinner_margin">10dp</dimen>
     <dimen name="edit_button_marginTop">50dp</dimen>
+    <dimen name="fragment_one_contact_textview_padding">15dp</dimen>
+    <dimen name="divider_contact_field_layout_width">2dp</dimen>
+    <dimen name="divider_contact_field_layout_margin">7dp</dimen>
 </resources>
