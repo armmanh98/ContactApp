@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="cardview_layout_marginBottom">5dp</dimen>
+    <dimen name="item_linear_layout_padding">10dp</dimen>
+    <dimen name="edit_linear_layout_padding">10dp</dimen>
+    <dimen name="edit_spinner_margin">10dp</dimen>
+    <dimen name="edit_button_marginTop">50dp</dimen>
+</resources>

@@ -16,9 +16,9 @@ import com.example.user.contactsapp.R;
 public class AlertDFragment extends DialogFragment {
 
 
-    public static final String FROM_FOR_ALERT_FRAGMENT = "from  where  replace or add alertFragment";
-    public static final String ID_OF_LONG_CLICKED_ITEM = "Id of long clicked item";
-    public static final String POSITION_OF_LONG_CLICKED_ITEM = "Position of long clicked item";
+    public static final String FROM_FOR_ALERT_FRAGMENT_KEY = "from  where  replace or add alertFragment";
+    public static final String ID_OF_LONG_CLICKED_ITEM_KEY = "Id of long clicked item";
+    public static final String POSITION_OF_LONG_CLICKED_ITEM_KEY = "Position of long clicked item";
 
     private DialogClickListener callback;
 
@@ -26,7 +26,7 @@ public class AlertDFragment extends DialogFragment {
         AlertDFragment myFragment = new AlertDFragment();
 
         Bundle args = new Bundle();
-        args.putInt(FROM_FOR_ALERT_FRAGMENT, numberOfRequest);
+        args.putInt(FROM_FOR_ALERT_FRAGMENT_KEY, numberOfRequest);
         myFragment.setArguments(args);
 
         return myFragment;
@@ -40,7 +40,7 @@ public class AlertDFragment extends DialogFragment {
         try {
             callback = (DialogClickListener) getTargetFragment();
         } catch (ClassCastException e) {
-            throw new ClassCastException("Calling fragment must implement DialogClickListener interface");
+            throw new ClassCastException(getString(R.string.class_cast_exception_calling_fragment));
         }
     }
 
@@ -52,7 +52,7 @@ public class AlertDFragment extends DialogFragment {
 
                 .setPositiveButton(R.string.positive_button_text, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        callback.onEditClick(getArguments().getInt(ID_OF_LONG_CLICKED_ITEM));
+                        callback.onEditClick(getArguments().getInt(ID_OF_LONG_CLICKED_ITEM_KEY));
 
 
                     }
@@ -60,7 +60,7 @@ public class AlertDFragment extends DialogFragment {
 
                 .setNegativeButton(R.string.negative_button_text, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,	int which) {
-                        callback.onDeleteClick(getArguments().getInt(ID_OF_LONG_CLICKED_ITEM),getArguments().getInt(POSITION_OF_LONG_CLICKED_ITEM));
+                        callback.onDeleteClick(getArguments().getInt(ID_OF_LONG_CLICKED_ITEM_KEY),getArguments().getInt(POSITION_OF_LONG_CLICKED_ITEM_KEY));
 
 
                     }

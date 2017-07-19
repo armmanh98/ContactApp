@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
     private DatabaseHandler db;
 
-    public static final String FROM_FOR_ADD_OR_EDT_FRAGMENT_KEY = "from  where  replace or add AddOrEditFr";
+    public static final String FROM_WHERE_ADD_OR_EDT_FRAGMENT_KEY = "from  where  replace or add AddOrEditFr";
     public static final String NAME_OF_EDITABLE_ITEM = "name edit cont";
     public static final String NUMBER_OF_EDITABLE_ITEM = "number edit cont";
     public static final String AGE_OF_EDITABLE_ITEM = "age edit cont";
@@ -63,12 +62,11 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
         db = new DatabaseHandler(getActivity());
 
-        etName = (EditText) view.findViewById(R.id.fragmentEdit_name);
-        etNumber = (EditText) view.findViewById(R.id.fragmentEdit_number);
-        etAge = (EditText) view.findViewById(R.id.fragmentEdit_age);
-//        etGender = (EditText) view.findViewById(R.id.fragmentEdit_gender);
-        btnSubmit = (Button) view.findViewById(R.id.fragmentEdit_btn_submit);
-        spinner = (Spinner) view.findViewById(R.id.spinner_gender);
+        etName =  view.findViewById(R.id.fragmentEdit_name);
+        etNumber =  view.findViewById(R.id.fragmentEdit_number);
+        etAge =  view.findViewById(R.id.fragmentEdit_age);
+        btnSubmit =  view.findViewById(R.id.fragmentEdit_btn_submit);
+        spinner =  view.findViewById(R.id.spinner_gender);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.genders_array, android.R.layout.simple_spinner_item);
@@ -77,7 +75,6 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
         spinner.setAdapter(adapter);
 
-        Log.i("TAG", ":::: " + spinner.getSelectedItem().toString());
 
         etName.addTextChangedListener(new TextWatcher() {
             @Override
@@ -136,7 +133,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
 
 
-        switch (getArguments().getInt(FROM_FOR_ADD_OR_EDT_FRAGMENT_KEY)) {
+        switch (getArguments().getInt(FROM_WHERE_ADD_OR_EDT_FRAGMENT_KEY)) {
 
             case 1:
                 btnSubmit.setOnClickListener(new View.OnClickListener() {
@@ -166,7 +163,6 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
                 etName.setText(getArguments().getString(NAME_OF_EDITABLE_ITEM));
                 etNumber.setText(getArguments().getString(NUMBER_OF_EDITABLE_ITEM));
                 etAge.setText(getArguments().getString(AGE_OF_EDITABLE_ITEM));
-//                etGender.setText(getArguments().getString(GENDER_OF_EDITABLE_ITEM));
                 spinner.setSelection("Male".equals(getArguments().getString(GENDER_OF_EDITABLE_ITEM)) ? 0 : 1);
 
 

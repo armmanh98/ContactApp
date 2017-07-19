@@ -23,7 +23,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     private List<Contact> mData = Collections.emptyList();
     private LayoutInflater mInflater;
     private ItemLongClickListener mClickListener;
-    private Contact contact;
 
 
     public ContactsAdapter(Context context, List<Contact> data, ItemLongClickListener mClickListener) {
@@ -46,8 +45,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
-        this.contact = mData.get(position);
 
         holder.name.setText(mData.get(position).getName());
         holder.number.setText(String.valueOf(mData.get(position).getNumber()));
@@ -90,15 +87,11 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         }
     }
 
-//    public void setClickListener(ItemLongClickListener itemClickListener) {
-//        this.mClickListener = itemClickListener;
-//    }
-
-
-
     public interface ItemLongClickListener {
+
         void onItemLongClick(View view, int position, Contact contact);
     }
+
     public void removeItem(int position) {
         mData.remove(position);
     }

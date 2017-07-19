@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:padding="10dp"
+    android:padding="@dimen/edit_linear_layout_padding"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,7 +12,7 @@
         >
 
         <TextView
-            android:text="Name  :"
+            android:text="@string/name"
             android:gravity="center"
             android:layout_gravity="center"
             android:layout_weight="4"
@@ -21,10 +21,9 @@
 
         <EditText
             android:layout_weight="2"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/cardview_compat_inset_shadow"
             android:soundEffectsEnabled="true"
             android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789_-"
-            android:padding="5dp"
             android:inputType="textCapWords"
             android:id="@+id/fragmentEdit_name"
             android:layout_width="match_parent"
@@ -38,7 +37,7 @@
         >
 
         <TextView
-            android:text="Number  :"
+            android:text="@string/number"
             android:gravity="center"
             android:layout_gravity="center"
             android:layout_weight="4"
@@ -47,8 +46,6 @@
 
         <EditText
             android:layout_weight="2"
-            android:layout_margin="10dp"
-            android:padding="5dp"
             android:inputType="number"
             android:id="@+id/fragmentEdit_number"
             android:layout_width="match_parent"
@@ -61,7 +58,7 @@
         >
 
         <TextView
-            android:text="Age  :"
+            android:text="@string/age"
             android:gravity="center"
             android:layout_gravity="center"
             android:layout_weight="4"
@@ -69,8 +66,6 @@
             android:layout_height="wrap_content" />
         <EditText
             android:layout_weight="2"
-            android:layout_margin="10dp"
-            android:padding="5dp"
             android:inputType="number"
             android:maxLength="3"
             android:id="@+id/fragmentEdit_age"
@@ -89,11 +84,10 @@
             android:layout_gravity="center"
             android:layout_weight="4"
             android:gravity="center"
-            android:text="Gender  :" />
+            android:text="@string/gender" />
 
         <Spinner
-            android:layout_margin="10dp"
-            android:padding="5dp"
+            android:layout_margin="@dimen/edit_spinner_margin"
             android:gravity="center"
             android:id="@+id/spinner_gender"
             android:layout_weight="2"
@@ -105,7 +99,7 @@
     </LinearLayout>
 
     <Button
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="@dimen/edit_button_marginTop"
         android:text="@string/submit"
         android:id="@+id/fragmentEdit_btn_submit"
         android:layout_width="wrap_content"
