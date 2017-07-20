@@ -2,34 +2,57 @@ package com.example.user.contactsapp.Fragments;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.user.contactsapp.Contact.Contact;
 import com.example.user.contactsapp.DataBasa.DatabaseHandler;
+import com.example.user.contactsapp.Image.Image;
 import com.example.user.contactsapp.R;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
+import static android.app.Activity.RESULT_OK;
+
+//import android.net.Uri;
 
 /**
  * Created by User on 7/13/2017.
  */
 
 public class AddOrEditContactFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
     private Button btnSubmit;
     private EditText etName;
     private EditText etNumber;
     private EditText etAge;
     private Spinner spinner;
+    private ImageView imgPhoto;
 
     private DatabaseHandler db;
 
@@ -39,6 +62,14 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     public static final String AGE_OF_EDITABLE_ITEM = "age edit cont";
     public static final String GENDER_OF_EDITABLE_ITEM = "gender edit cont";
     public static final String ID_OF_EDITABLE_ITEM = "Id edit cont";
+    private static final int CAMERA_REQUEST = 1888;
+    static final int REQUEST_TAKE_PHOTO = 1;
+    Uri mUri;
+
+
+    private ArrayList imagesPaths = new ArrayList();
+    String mCurrentPhotoPath;
+
     String regEx = "[+][0-9]{10,13}$";
     String regEx2 = "[0][0-9]{10,13}$";
     String regEx3 = "[00][0-9]{10,13}$";
@@ -49,6 +80,80 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
         myFragment.setArguments(bundle);
         return myFragment;
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.choice_photo,menu);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater =getActivity().getMenuInflater();
+        inflater.inflate(R.menu.choice_photo, menu);
+
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        Toast.makeText(getActivity(),item.getTitle().toString() ,Toast.LENGTH_SHORT).show();
+//        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        dispatchTakePictureIntent();
+        return true;
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
+
+            Log.i("TAG", mCurrentPhotoPath + " aaa:::");
+
+            imgPhoto.setImageURI(mUri);
+        }
+    }
+
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                mUri = Uri.fromFile(photoFile);
+
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mUri);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+        }
     }
 
 
@@ -64,11 +169,24 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
         db = new DatabaseHandler(getActivity());
 
+
+        imgPhoto = view.findViewById(R.id.fragment_edit_add_photo_img);
         etName =  view.findViewById(R.id.fragmentEdit_name);
         etNumber =  view.findViewById(R.id.fragmentEdit_number);
         etAge =  view.findViewById(R.id.fragmentEdit_age);
         btnSubmit =  view.findViewById(R.id.fragmentEdit_btn_submit);
         spinner =  view.findViewById(R.id.spinner_gender);
+
+        registerForContextMenu(imgPhoto);
+        imgPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().openContextMenu(view);
+            }
+        });
+
+        registerForContextMenu(etName);
+
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.genders_array, android.R.layout.simple_spinner_item);
@@ -153,7 +271,15 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
                                 !etNumber.getText().toString().isEmpty() &
                                 !etAge.getText().toString().isEmpty()
                                 ) {
-                            addNewContact();
+//                            addNewContact();
+                            db.addImage(new Image(mUri.toString(),"AAA",db.addContact(new Contact(
+                                    etName.getText().toString(),
+                                    etNumber.getText().toString(),
+                                    etAge.getText().toString(),
+                                    spinner.getSelectedItem().toString()
+                            ))));
+
+
 
                             Fragment addContactFragment = ContactsListFragment.newInstance();
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -231,6 +357,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     public void onNothingSelected(AdapterView<?> adapterView) {
 
     }
+
     private boolean isValidMobile(String phone) {
         return android.util.Patterns.PHONE.matcher(phone).matches();
     }

@@ -126,5 +126,11 @@
 
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/fragment_one_contact_picture_img"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+         />
+
 
 </LinearLayout>

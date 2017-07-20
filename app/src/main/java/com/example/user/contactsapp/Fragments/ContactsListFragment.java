@@ -81,6 +81,8 @@ public class ContactsListFragment extends Fragment  implements DialogClickListen
         Button btnAddContact = view.findViewById(R.id.list_fragment_btn_add);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+//        Log.i("TAG","aaaaaaaaaa"+db.getImage(db.getAllContacts().get(db.getAllContacts().size()-1).getId()).getPath());
+
         contactsAdapter = new ContactsAdapter(getActivity(), db.getAllContacts(), new ContactsAdapter.ItemLongClickListener() {
             @Override
             public void onItemLongClick(View view, int position, Contact contact) {
@@ -96,6 +98,7 @@ public class ContactsListFragment extends Fragment  implements DialogClickListen
             public void onItemClick(View view, int position, Contact contact) {
 
                 Bundle bundle = new Bundle();
+                bundle.putInt(ID_OF_EDITABLE_ITEM,contact.getId());
                 bundle.putString(NAME_OF_EDITABLE_ITEM,contact.getName());
                 bundle.putString(NUMBER_OF_EDITABLE_ITEM,contact.getNumber());
                 bundle.putString(AGE_OF_EDITABLE_ITEM,contact.getAge());

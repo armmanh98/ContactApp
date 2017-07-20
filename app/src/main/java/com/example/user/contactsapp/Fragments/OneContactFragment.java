@@ -1,17 +1,25 @@
 package com.example.user.contactsapp.Fragments;
 
 import android.app.Fragment;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.user.contactsapp.DataBasa.DatabaseHandler;
+import com.example.user.contactsapp.Image.Image;
 import com.example.user.contactsapp.R;
+
+import java.util.List;
 
 import static com.example.user.contactsapp.Fragments.AddOrEditContactFragment.AGE_OF_EDITABLE_ITEM;
 import static com.example.user.contactsapp.Fragments.AddOrEditContactFragment.GENDER_OF_EDITABLE_ITEM;
+import static com.example.user.contactsapp.Fragments.AddOrEditContactFragment.ID_OF_EDITABLE_ITEM;
 import static com.example.user.contactsapp.Fragments.AddOrEditContactFragment.NAME_OF_EDITABLE_ITEM;
 import static com.example.user.contactsapp.Fragments.AddOrEditContactFragment.NUMBER_OF_EDITABLE_ITEM;
 
@@ -31,10 +39,25 @@ public class OneContactFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        DatabaseHandler db = new DatabaseHandler(getActivity());
+
         TextView name = view.findViewById(R.id.fragment_one_contact_name_tv);
         TextView number = view.findViewById(R.id.fragment_one_contact_number_tv);
         TextView age = view.findViewById(R.id.fragment_one_contact_age_tv);
         TextView gender = view.findViewById(R.id.fragment_one_contact_gender_tv);
+        ImageView contactPicture = view.findViewById(R.id.fragment_one_contact_picture_img);
+
+        List<Image> images = db.getAllImages(getArguments().getInt(ID_OF_EDITABLE_ITEM));
+
+        Image image = db.getImage(getArguments().getInt(ID_OF_EDITABLE_ITEM));
+        Uri uri = Uri.parse(image.getPath());
+
+        contactPicture.setImageURI(uri);
+
+        for(Image m : images){
+
+             Log.i("TAG", "Images " + m.getPath());
+        }
 
         name.setText(getArguments().getString(NAME_OF_EDITABLE_ITEM));
         number.setText(getArguments().getString(NUMBER_OF_EDITABLE_ITEM));

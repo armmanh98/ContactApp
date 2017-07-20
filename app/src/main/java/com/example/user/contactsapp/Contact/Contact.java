@@ -1,12 +1,10 @@
 package com.example.user.contactsapp.Contact;
 
-import java.io.Serializable;
-
 /**
  * Created by User on 7/12/2017.
  */
 
-public class Contact implements Serializable {
+public class Contact  {
     private int id;
     private String name;
     private String number;

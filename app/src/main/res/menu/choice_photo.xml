@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <item
+        android:id="@+id/gallery"
+        android:icon="@drawable/icon_gallery"
+        android:title="Gallery"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/take_photo"
+        android:icon="@drawable/icon_shot"
+        android:title="Take photo"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/set_url"
+        android:icon="@drawable/icon_image_url"
+        android:title="Set Url"
+        app:showAsAction="always"/>
+
+</menu>
