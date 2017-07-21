@@ -10,7 +10,6 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,6 +27,7 @@ import android.widget.Toast;
 
 import com.example.user.contactsapp.Contact.Contact;
 import com.example.user.contactsapp.DataBasa.DatabaseHandler;
+import com.example.user.contactsapp.Dialogs.MyDialogFragment;
 import com.example.user.contactsapp.Image.Image;
 import com.example.user.contactsapp.R;
 
@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -62,9 +63,12 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     public static final String AGE_OF_EDITABLE_ITEM = "age edit cont";
     public static final String GENDER_OF_EDITABLE_ITEM = "gender edit cont";
     public static final String ID_OF_EDITABLE_ITEM = "Id edit cont";
-    private static final int CAMERA_REQUEST = 1888;
+    public static final String TAG_FOR_MY_DIALOG_FRAGMENT = "my Dialog Fragment";
     static final int REQUEST_TAKE_PHOTO = 1;
-    Uri mUri;
+    private String imageDescription;
+    private MyDialogFragment fragment;
+    private List<Image> listOfAddedImages;
+    private Uri mUri;
 
 
     private ArrayList imagesPaths = new ArrayList();
@@ -85,13 +89,13 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.choice_photo,menu);
+        inflater.inflate(R.menu.choice_photo, menu);
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        MenuInflater inflater =getActivity().getMenuInflater();
+        MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.choice_photo, menu);
 
 
@@ -100,8 +104,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     @Override
     public boolean onContextItemSelected(MenuItem item) {
 
-        Toast.makeText(getActivity(),item.getTitle().toString() ,Toast.LENGTH_SHORT).show();
-//        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        Toast.makeText(getActivity(), item.getTitle().toString(), Toast.LENGTH_SHORT).show();
         dispatchTakePictureIntent();
         return true;
 
@@ -111,10 +114,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 
-
-            Log.i("TAG", mCurrentPhotoPath + " aaa:::");
-
-            imgPhoto.setImageURI(mUri);
+            listOfAddedImages.add(new Image(mUri.toString(), imageDescription));
         }
     }
 
@@ -134,6 +134,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
+
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -167,21 +168,47 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        listOfAddedImages = new ArrayList<>();
+
         db = new DatabaseHandler(getActivity());
 
 
         imgPhoto = view.findViewById(R.id.fragment_edit_add_photo_img);
-        etName =  view.findViewById(R.id.fragmentEdit_name);
-        etNumber =  view.findViewById(R.id.fragmentEdit_number);
-        etAge =  view.findViewById(R.id.fragmentEdit_age);
-        btnSubmit =  view.findViewById(R.id.fragmentEdit_btn_submit);
-        spinner =  view.findViewById(R.id.spinner_gender);
+        etName = view.findViewById(R.id.fragmentEdit_name);
+        etNumber = view.findViewById(R.id.fragmentEdit_number);
+        etAge = view.findViewById(R.id.fragmentEdit_age);
+        btnSubmit = view.findViewById(R.id.fragmentEdit_btn_submit);
+        spinner = view.findViewById(R.id.spinner_gender);
 
         registerForContextMenu(imgPhoto);
         imgPhoto.setOnClickListener(new View.OnClickListener() {
+
+            Bundle bundle = new Bundle();
+
             @Override
-            public void onClick(View view) {
-                getActivity().openContextMenu(view);
+            public void onClick(final View view) {
+                fragment = new MyDialogFragment.AlertFragmentSetImageDescriptionBuilder(bundle)
+                        .clickListenerPositiveButton(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view1) {
+                                if (!fragment.getAddDescriptionEdt().getText().toString().isEmpty()) {
+                                    fragment.dismiss();
+                                    getActivity().openContextMenu(view);
+                                    imageDescription = fragment.getAddDescriptionEdt().getText().toString();
+                                } else
+                                    Toast.makeText(getActivity(), R.string.image_description_error, Toast.LENGTH_SHORT).show();
+
+                            }
+                        })
+                        .clickListenerNegativeButton(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                fragment.dismiss();
+                            }
+                        }).build();
+                fragment.setTargetFragment(getParentFragment(), 5);
+                fragment.show(getFragmentManager(), TAG_FOR_MY_DIALOG_FRAGMENT);
             }
         });
 
@@ -243,7 +270,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
                 if (etNumber.getText().toString().isEmpty())
                     etNumber.setError(getString(R.string.error_empty_field));
 
-                if(!etNumber.getText().toString().matches(regEx) && !etNumber.getText().toString().matches(regEx2) && !etNumber.getText().toString().matches(regEx3)){
+                if (!etNumber.getText().toString().matches(regEx) && !etNumber.getText().toString().matches(regEx2) && !etNumber.getText().toString().matches(regEx3)) {
                     etNumber.setError(getString(R.string.wrong_number));
                 }
 //                if (!isValidMobile(etNumber.getText().toString()))
@@ -257,9 +284,6 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
         });
 
 
-
-
-
         switch (getArguments().getInt(FROM_WHERE_ADD_OR_EDT_FRAGMENT_KEY)) {
 
             case 1:
@@ -271,14 +295,16 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
                                 !etNumber.getText().toString().isEmpty() &
                                 !etAge.getText().toString().isEmpty()
                                 ) {
-//                            addNewContact();
-                            db.addImage(new Image(mUri.toString(),"AAA",db.addContact(new Contact(
+                            long i = db.addContact(new Contact(
                                     etName.getText().toString(),
                                     etNumber.getText().toString(),
                                     etAge.getText().toString(),
                                     spinner.getSelectedItem().toString()
-                            ))));
-
+                            ));
+                            for (Image a : listOfAddedImages) {
+                                a.setOwnerId(i);
+                                db.addImage(a);
+                            }
 
 
                             Fragment addContactFragment = ContactsListFragment.newInstance();
@@ -301,7 +327,6 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
                 spinner.setSelection("Male".equals(getArguments().getString(GENDER_OF_EDITABLE_ITEM)) ? 0 : 1);
 
 
-
                 btnSubmit.setText(R.string.edit_button_text);
                 btnSubmit.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -317,9 +342,9 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
                             Toast.makeText(getActivity(), R.string.wrong_statement, Toast.LENGTH_SHORT).show();
                         } else {
                             db.updateContact(new Contact(getArguments().getInt(ID_OF_EDITABLE_ITEM),
-                                     etName.getText().toString(),
-                                     etNumber.getText().toString(),
-                                     etAge.getText().toString(),
+                                    etName.getText().toString(),
+                                    etNumber.getText().toString(),
+                                    etAge.getText().toString(),
                                     spinner.getSelectedItem().toString()));
 
                             transaction.replace(R.id.mainActivity_list_place, addContactFragment);
@@ -337,16 +362,6 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
     }
 
-    void addNewContact() {
-
-        db.addContact(new Contact(
-                etName.getText().toString(),
-                etNumber.getText().toString(),
-                etAge.getText().toString(),
-                spinner.getSelectedItem().toString()
-        ));
-
-    }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -358,7 +373,4 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
     }
 
-    private boolean isValidMobile(String phone) {
-        return android.util.Patterns.PHONE.matcher(phone).matches();
-    }
 }

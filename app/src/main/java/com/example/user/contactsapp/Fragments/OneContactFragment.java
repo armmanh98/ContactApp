@@ -56,7 +56,7 @@ public class OneContactFragment extends Fragment {
 
         for(Image m : images){
 
-             Log.i("TAG", "Images " + m.getPath());
+             Log.i("TAG", "Images " + m.getPath() + m.getDescription());
         }
 
         name.setText(getArguments().getString(NAME_OF_EDITABLE_ITEM));

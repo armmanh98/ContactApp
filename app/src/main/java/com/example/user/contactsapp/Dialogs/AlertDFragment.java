@@ -59,8 +59,8 @@ public class AlertDFragment extends DialogFragment {
                 })
 
                 .setNegativeButton(R.string.negative_button_text, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,	int which) {
-                        callback.onDeleteClick(getArguments().getInt(ID_OF_LONG_CLICKED_ITEM_KEY),getArguments().getInt(POSITION_OF_LONG_CLICKED_ITEM_KEY));
+                    public void onClick(DialogInterface dialog, int which) {
+                        callback.onDeleteClick(getArguments().getInt(ID_OF_LONG_CLICKED_ITEM_KEY), getArguments().getInt(POSITION_OF_LONG_CLICKED_ITEM_KEY));
 
 
                     }

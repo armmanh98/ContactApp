@@ -28,6 +28,11 @@ public class Image {
         this.description = description;
         this.ownerId = ownerId;
     }
+    public Image(String path ,String description) {
+        this.path = path;
+        this.description = description;
+
+    }
     public Image() {
 
     }
@@ -56,7 +61,7 @@ public class Image {
         return ownerId;
     }
 
-    public void setOwnerId(int ownerId) {
+    public void setOwnerId(long ownerId) {
         this.ownerId = ownerId;
     }
 }
