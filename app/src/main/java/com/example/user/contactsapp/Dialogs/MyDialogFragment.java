@@ -1,7 +1,7 @@
 package com.example.user.contactsapp.Dialogs;
 
 import android.annotation.SuppressLint;
-import android.app.DialogFragment;
+import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;

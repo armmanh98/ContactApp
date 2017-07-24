@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <LinearLayout
@@ -126,11 +127,29 @@
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/fragment_one_contact_picture_img"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-         />
 
+
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_margin="25dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+             />
+
+        <!--<com.viewpagerindicator.CirclePageIndicator-->
+            <!--android:id="@+id/indicator"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:gravity="bottom"-->
+            <!--android:padding="10dip"-->
+            <!--app:centered="true"-->
+            <!--app:fillColor="#ff0099"-->
+            <!--app:pageColor="#FF0000"-->
+            <!--app:snap="false" />-->
 
 </LinearLayout>
+
+

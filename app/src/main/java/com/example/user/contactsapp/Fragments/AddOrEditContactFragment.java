@@ -1,7 +1,7 @@
 package com.example.user.contactsapp.Fragments;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -64,11 +65,13 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     public static final String GENDER_OF_EDITABLE_ITEM = "gender edit cont";
     public static final String ID_OF_EDITABLE_ITEM = "Id edit cont";
     public static final String TAG_FOR_MY_DIALOG_FRAGMENT = "my Dialog Fragment";
+    private static final int CAMERA_REQUEST = 1888;
     static final int REQUEST_TAKE_PHOTO = 1;
-    private String imageDescription;
-    private MyDialogFragment fragment;
-    private List<Image> listOfAddedImages;
-    private Uri mUri;
+    String imageDescription;
+    MyDialogFragment fragment;
+    //    List<String> listOfAddedImages;
+    List<Image> listOfAddedImages;
+    Uri mUri;
 
 
     private ArrayList imagesPaths = new ArrayList();
@@ -105,6 +108,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     public boolean onContextItemSelected(MenuItem item) {
 
         Toast.makeText(getActivity(), item.getTitle().toString(), Toast.LENGTH_SHORT).show();
+//        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         dispatchTakePictureIntent();
         return true;
 
@@ -114,7 +118,11 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 
+
+            Log.i("TAG", mCurrentPhotoPath + " aaa:::");
+//            listOfAddedImages.add(mUri.toString());
             listOfAddedImages.add(new Image(mUri.toString(), imageDescription));
+//            imgPhoto.setImageURI(mUri);
         }
     }
 
@@ -198,12 +206,13 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
                                 } else
                                     Toast.makeText(getActivity(), R.string.image_description_error, Toast.LENGTH_SHORT).show();
 
+                                Log.i("TAG", "clicked positive button");
                             }
                         })
                         .clickListenerNegativeButton(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-
+                                Log.i("TAG", "clicked negative button");
                                 fragment.dismiss();
                             }
                         }).build();
@@ -362,6 +371,16 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
     }
 
+    void addNewContact() {
+
+        db.addContact(new Contact(
+                etName.getText().toString(),
+                etNumber.getText().toString(),
+                etAge.getText().toString(),
+                spinner.getSelectedItem().toString()
+        ));
+
+    }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -373,4 +392,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
     }
 
+    private boolean isValidMobile(String phone) {
+        return android.util.Patterns.PHONE.matcher(phone).matches();
+    }
 }

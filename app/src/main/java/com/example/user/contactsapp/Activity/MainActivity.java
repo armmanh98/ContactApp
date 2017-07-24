@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(R.id.mainActivity_list_place, ContactsListFragment.newInstance()).commit();
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
