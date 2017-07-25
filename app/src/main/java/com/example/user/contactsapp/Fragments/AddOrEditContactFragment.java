@@ -74,12 +74,14 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     public static final String ID_OF_EDITABLE_ITEM = "Id edit cont";
     public static final String TAG_FOR_MY_DIALOG_FRAGMENT = "my Dialog Fragment";
     static final int REQUEST_TAKE_PHOTO = 1;
+    int ownerId;
     String imageDescription;
     MyDialogFragment fragmentPhoto;
     DialogFragmentImageUrl fragmentPhotoUrl;
     File imageFile;
     List<Image> listOfAddedImages;
     Uri mUri;
+    int tiv;
 
     String mCurrentPhotoPath;
 
@@ -143,9 +145,8 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
         public void onReceive(Context context, Intent intent) {
             Toast.makeText(getActivity(), R.string.image_download_completed, Toast.LENGTH_SHORT).show();
             mUri = Uri.fromFile(imageFile);
-            imgPhoto.setImageURI(mUri);
             listOfAddedImages.add(new Image(mUri.toString(), imageDescription));
-            countOfImagesTv.setText(listOfAddedImages.size() + "/5");
+            countOfImagesTv.setText((listOfAddedImages.size()+tiv) + "/5");
 
         }
     };
@@ -203,7 +204,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 
             listOfAddedImages.add(new Image(mUri.toString(), imageDescription));
-            countOfImagesTv.setText(listOfAddedImages.size() + "/5");
+            countOfImagesTv.setText((listOfAddedImages.size()+tiv) + "/5");
 
         }
 
@@ -231,8 +232,8 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
 
             listOfAddedImages.add(new Image(picturePath, imageDescription));
-            countOfImagesTv.setText(listOfAddedImages.size() + "/5");
-            imgPhoto.setImageURI(Uri.parse(picturePath));
+            countOfImagesTv.setText((listOfAddedImages.size()+tiv) + "/5");
+
         }
     }
 
@@ -300,10 +301,11 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ownerId = getArguments().getInt(ID_OF_EDITABLE_ITEM);
+
         listOfAddedImages = new ArrayList<>();
 
         db = new DatabaseHandler(getActivity());
-
 
         imgPhoto = view.findViewById(R.id.fragment_edit_add_photo_img);
         etName = view.findViewById(R.id.fragmentEdit_name);
@@ -320,7 +322,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
             @Override
             public void onClick(final View view) {
-                if (listOfAddedImages.size() <= 4) {
+                if (listOfAddedImages.size()+tiv<=4) {
                     fragmentPhoto = new MyDialogFragment.AlertFragmentSetImageDescriptionBuilder()
                             .clickListenerPositiveButton(new View.OnClickListener() {
                                 @Override
@@ -428,6 +430,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
         switch (getArguments().getInt(FROM_WHERE_ADD_OR_EDT_FRAGMENT_KEY)) {
 
             case 1:
+                tiv = 0;
                 btnSubmit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -462,10 +465,16 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
                 break;
 
             case 2:
+
+                tiv = db.getAllImages(ownerId).size();
+                countOfImagesTv.setText(tiv + "/5");
+                Log.i("TAG", "ARCA " + tiv);
                 etName.setText(getArguments().getString(NAME_OF_EDITABLE_ITEM));
                 etNumber.setText(getArguments().getString(NUMBER_OF_EDITABLE_ITEM));
                 etAge.setText(getArguments().getString(AGE_OF_EDITABLE_ITEM));
                 spinner.setSelection("Male".equals(getArguments().getString(GENDER_OF_EDITABLE_ITEM)) ? 0 : 1);
+
+                imgPhoto.setImageDrawable(getResources().getDrawable(R.drawable.icon_add_image));
 
 
                 btnSubmit.setText(R.string.edit_button_text);
@@ -487,6 +496,10 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
                                     etNumber.getText().toString(),
                                     etAge.getText().toString(),
                                     spinner.getSelectedItem().toString()));
+                            for (Image a : listOfAddedImages) {
+                                a.setOwnerId(getArguments().getInt(ID_OF_EDITABLE_ITEM));
+                                db.addImage(a);
+                            }
 
                             transaction.replace(R.id.mainActivity_list_place, addContactFragment);
                             transaction.addToBackStack(null);
