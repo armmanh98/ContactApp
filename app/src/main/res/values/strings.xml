@@ -16,9 +16,16 @@
     <string name="wrong_number">Wrong number</string>
     <string name="picture">Picture :</string>
     <string name="image_description_error">Image must have description</string>
+    <string name="image_download_completed">Download is completed</string>
+    <string name="max_size_image_error">Max size of picture</string>
 
     <string-array name="genders_array">
         <item>Male</item>
         <item>Female</item>
+    </string-array>
+
+    <string-array name="images_url_array">
+        <item>https://www.w3schools.com/css/img_fjords.jpg</item>
+        <item>https://www.w3schools.com/css/img_mountains.jpg</item>
     </string-array>
 </resources>

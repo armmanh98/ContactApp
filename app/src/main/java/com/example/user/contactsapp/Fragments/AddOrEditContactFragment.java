@@ -1,13 +1,18 @@
 package com.example.user.contactsapp.Fragments;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -24,10 +29,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.contactsapp.Contact.Contact;
 import com.example.user.contactsapp.DataBasa.DatabaseHandler;
+import com.example.user.contactsapp.Dialogs.DialogFragmentImageUrl;
 import com.example.user.contactsapp.Dialogs.MyDialogFragment;
 import com.example.user.contactsapp.Image.Image;
 import com.example.user.contactsapp.R;
@@ -55,6 +62,7 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     private EditText etAge;
     private Spinner spinner;
     private ImageView imgPhoto;
+    private TextView countOfImagesTv;
 
     private DatabaseHandler db;
 
@@ -65,16 +73,14 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     public static final String GENDER_OF_EDITABLE_ITEM = "gender edit cont";
     public static final String ID_OF_EDITABLE_ITEM = "Id edit cont";
     public static final String TAG_FOR_MY_DIALOG_FRAGMENT = "my Dialog Fragment";
-    private static final int CAMERA_REQUEST = 1888;
     static final int REQUEST_TAKE_PHOTO = 1;
     String imageDescription;
-    MyDialogFragment fragment;
-    //    List<String> listOfAddedImages;
+    MyDialogFragment fragmentPhoto;
+    DialogFragmentImageUrl fragmentPhotoUrl;
+    File imageFile;
     List<Image> listOfAddedImages;
     Uri mUri;
 
-
-    private ArrayList imagesPaths = new ArrayList();
     String mCurrentPhotoPath;
 
     String regEx = "[+][0-9]{10,13}$";
@@ -104,25 +110,129 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
     }
 
+    public Runnable downloadImageRunnable(final String url) {
+        final String[] myUrl = {url};
+
+
+        return new Runnable() {
+            @Override
+            public void run() {
+
+
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(myUrl[0]));
+//                    request.setDescription("Some descrition");
+//                    request.setTitle("Some title");
+
+                request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = "JPEG_" + timeStamp + "_";
+
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, imageFileName + ".jpg");
+                DownloadManager manager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                manager.enqueue(request);
+                imageFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + File.separator + imageFileName + ".jpg");
+
+//
+
+            }
+        };
+    }
+
+    BroadcastReceiver onComplete = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(getActivity(), R.string.image_download_completed, Toast.LENGTH_SHORT).show();
+            mUri = Uri.fromFile(imageFile);
+            imgPhoto.setImageURI(mUri);
+            listOfAddedImages.add(new Image(mUri.toString(), imageDescription));
+            countOfImagesTv.setText(listOfAddedImages.size() + "/5");
+
+        }
+    };
+
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
 
+        switch (item.getTitle().toString()) {
+
+            case "Take photo":
+                dispatchTakePictureIntent();
+                break;
+            case "Set Url":
+                fragmentPhotoUrl = new DialogFragmentImageUrl.AlertFragmentSetImageDescriptionBuilder()
+                        .clickListenerPositiveButton(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                Thread thread = new Thread(downloadImageRunnable(fragmentPhotoUrl.getSpinner().getSelectedItem().toString()));
+                                thread.start();
+                                fragmentPhotoUrl.dismiss();
+
+
+                            }
+
+                        })
+                        .clickListenerNegativeButton(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                fragmentPhotoUrl.dismiss();
+
+                            }
+                        })
+                        .myArrayRes(R.array.images_url_array)
+                        .build();
+                fragmentPhotoUrl.show(getFragmentManager(), "TAG");
+                break;
+            case "Gallery":
+                Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, 5);
+                break;
+
+
+        }
+
         Toast.makeText(getActivity(), item.getTitle().toString(), Toast.LENGTH_SHORT).show();
-//        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        dispatchTakePictureIntent();
         return true;
 
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 
-
-            Log.i("TAG", mCurrentPhotoPath + " aaa:::");
-//            listOfAddedImages.add(mUri.toString());
             listOfAddedImages.add(new Image(mUri.toString(), imageDescription));
-//            imgPhoto.setImageURI(mUri);
+            countOfImagesTv.setText(listOfAddedImages.size() + "/5");
+
+        }
+
+        if (requestCode == 5 && resultCode == RESULT_OK
+                && null != data) {
+
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+            Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+
+            if (cursor == null || cursor.getCount() < 1) {
+                return;
+            }
+
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+
+            if (columnIndex < 0)
+                return;
+
+            String picturePath = cursor.getString(columnIndex);
+
+            cursor.close();
+
+
+            listOfAddedImages.add(new Image(picturePath, imageDescription));
+            countOfImagesTv.setText(listOfAddedImages.size() + "/5");
+            imgPhoto.setImageURI(Uri.parse(picturePath));
         }
     }
 
@@ -173,6 +283,20 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(onComplete);
+
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -187,39 +311,47 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
         etAge = view.findViewById(R.id.fragmentEdit_age);
         btnSubmit = view.findViewById(R.id.fragmentEdit_btn_submit);
         spinner = view.findViewById(R.id.spinner_gender);
+        countOfImagesTv = view.findViewById(R.id.fragmentEdit_count_of_images);
 
         registerForContextMenu(imgPhoto);
+
         imgPhoto.setOnClickListener(new View.OnClickListener() {
 
-            Bundle bundle = new Bundle();
 
             @Override
             public void onClick(final View view) {
-                fragment = new MyDialogFragment.AlertFragmentSetImageDescriptionBuilder(bundle)
-                        .clickListenerPositiveButton(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view1) {
-                                if (!fragment.getAddDescriptionEdt().getText().toString().isEmpty()) {
-                                    fragment.dismiss();
-                                    getActivity().openContextMenu(view);
-                                    imageDescription = fragment.getAddDescriptionEdt().getText().toString();
-                                } else
-                                    Toast.makeText(getActivity(), R.string.image_description_error, Toast.LENGTH_SHORT).show();
+                if (listOfAddedImages.size() <= 4) {
+                    fragmentPhoto = new MyDialogFragment.AlertFragmentSetImageDescriptionBuilder()
+                            .clickListenerPositiveButton(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view1) {
+                                    if (!fragmentPhoto.getAddDescriptionEdt().getText().toString().isEmpty()) {
+                                        fragmentPhoto.dismiss();
+                                        getActivity().openContextMenu(view);
+                                        imageDescription = fragmentPhoto.getAddDescriptionEdt().getText().toString();
+                                    } else
+                                        Toast.makeText(getActivity(), R.string.image_description_error, Toast.LENGTH_SHORT).show();
 
-                                Log.i("TAG", "clicked positive button");
-                            }
-                        })
-                        .clickListenerNegativeButton(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Log.i("TAG", "clicked negative button");
-                                fragment.dismiss();
-                            }
-                        }).build();
-                fragment.setTargetFragment(getParentFragment(), 5);
-                fragment.show(getFragmentManager(), TAG_FOR_MY_DIALOG_FRAGMENT);
+                                    Log.i("TAG", "clicked positive button");
+                                }
+                            })
+                            .clickListenerNegativeButton(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Log.i("TAG", "clicked negative button");
+                                    fragmentPhoto.dismiss();
+                                }
+                            })
+                            .title("Image Description")
+                            .build();
+                    fragmentPhoto.setTargetFragment(getParentFragment(), 5);
+                    fragmentPhoto.show(getFragmentManager(), TAG_FOR_MY_DIALOG_FRAGMENT);
+                }else {
+                    Toast.makeText(getActivity(), R.string.max_size_image_error,Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
 
         registerForContextMenu(etName);
 
@@ -371,16 +503,6 @@ public class AddOrEditContactFragment extends Fragment implements AdapterView.On
 
     }
 
-    void addNewContact() {
-
-        db.addContact(new Contact(
-                etName.getText().toString(),
-                etNumber.getText().toString(),
-                etAge.getText().toString(),
-                spinner.getSelectedItem().toString()
-        ));
-
-    }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

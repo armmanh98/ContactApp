@@ -37,16 +37,20 @@ public class AlertDFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         try {
             callback = (DialogClickListener) getTargetFragment();
         } catch (ClassCastException e) {
             throw new ClassCastException(getString(R.string.class_cast_exception_calling_fragment));
         }
+
+
     }
 
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
         return new AlertDialog.Builder(getActivity())
+
 
                 .setMessage(R.string.message_alert_fragment)
 

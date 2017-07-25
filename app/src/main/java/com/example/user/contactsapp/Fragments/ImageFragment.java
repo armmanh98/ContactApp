@@ -82,6 +82,7 @@ public class ImageFragment extends Fragment {
             case ExifInterface.ORIENTATION_NORMAL:
 
             default:
+                rotatedBitmap= takenImage;
                 break;
         }
 

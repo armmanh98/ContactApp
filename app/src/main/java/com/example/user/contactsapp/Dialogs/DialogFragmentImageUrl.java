@@ -1,14 +1,16 @@
 package com.example.user.contactsapp.Dialogs;
 
 import android.annotation.SuppressLint;
-import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
+import android.support.annotation.ArrayRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.example.user.contactsapp.R;
 
@@ -16,31 +18,35 @@ import com.example.user.contactsapp.R;
  * Created by User on 7/21/2017.
  */
 
-public class MyDialogFragment extends DialogFragment {
+public class DialogFragmentImageUrl extends DialogFragment {
 
     View.OnClickListener clickPositiveButton;
     View.OnClickListener clickNegativeButton;
     String title;
     Button positiveButton;
     Button negativeButton;
-    EditText addDescriptionEdt;
 
-
-    public EditText getAddDescriptionEdt() {
-        return addDescriptionEdt;
+    public Spinner getSpinner() {
+        return spinner;
     }
 
+    Spinner spinner;
+    ArrayAdapter<CharSequence> adapter;
+    @ArrayRes int myArrayRes;
+
+
     @SuppressLint("ValidFragment")
-    public MyDialogFragment(AlertFragmentSetImageDescriptionBuilder builder) {
+    public DialogFragmentImageUrl(AlertFragmentSetImageDescriptionBuilder builder) {
 
         super();
         this.clickPositiveButton = builder.clickPositiveButton;
         this.clickNegativeButton = builder.clickNegativeButton;
         this.title = builder.title;
+        this.myArrayRes = builder.myArrayRes;
 
     }
 
-    public MyDialogFragment() {
+    public DialogFragmentImageUrl() {
 
     }
 
@@ -48,21 +54,27 @@ public class MyDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        positiveButton = view.findViewById(R.id.fragment_image_description_btn_ok);
-        negativeButton = view.findViewById(R.id.fragment_image_description_btn_cancel);
-        addDescriptionEdt = view.findViewById(R.id.fragment_image_description_edt_description);
+        positiveButton = view.findViewById(R.id.fragment_set_image_url_btn_ok);
+        negativeButton = view.findViewById(R.id.fragment_set_image_url_btn_cancel);
+        spinner = view.findViewById(R.id.fragment_set_image_url_spinner);
 
         positiveButton.setOnClickListener(clickPositiveButton);
         negativeButton.setOnClickListener(clickNegativeButton);
 
-//        if(getArguments().isEmpty())
-//           addDescriptionEdt.setHint("Type image url");
+        adapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.images_url_array, android.R.layout.simple_spinner_item);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setAdapter(adapter);
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_image_description, container,
+        View rootView = inflater.inflate(R.layout.fragment_set_image_url, container,
                 false);
 
         getDialog().setTitle(title);
@@ -82,6 +94,7 @@ public class MyDialogFragment extends DialogFragment {
 
         View.OnClickListener clickPositiveButton;
         View.OnClickListener clickNegativeButton;
+        @ArrayRes int myArrayRes;
         String title;
 
         public AlertFragmentSetImageDescriptionBuilder() {
@@ -100,10 +113,14 @@ public class MyDialogFragment extends DialogFragment {
             this.title = title;
             return this;
         }
+        public AlertFragmentSetImageDescriptionBuilder myArrayRes(@ArrayRes int myArrayRes) {
+            this.myArrayRes = myArrayRes;
+            return this;
+        }
 
 
-        public MyDialogFragment build() {
-            return new MyDialogFragment(this);
+        public DialogFragmentImageUrl build() {
+            return new DialogFragmentImageUrl(this);
         }
 
 

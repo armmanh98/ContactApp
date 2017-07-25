@@ -1,21 +1,22 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:padding="1dip" >
 
+    <TextView
+        android:layout_weight="1"
+        android:id="@+id/tv_contact_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <ImageView
-
+        android:layout_weight="9"
         android:id="@+id/img_contact_image"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:layout_gravity="center"
         android:src="@mipmap/ic_launcher"
         android:scaleType="centerCrop" />
 
-    <TextView
-        android:id="@+id/tv_contact_description"
-        android:layout_alignParentTop="                                                                                   true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-</RelativeLayout>
+</LinearLayout>
